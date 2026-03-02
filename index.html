@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartHome Pro</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f2f4f8;
+}
+
+header {
+    background: #111827;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+nav {
+    background: #1f2937;
+    text-align: center;
+    padding: 10px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 15px;
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: #3b82f6;
+}
+
+section {
+    padding: 40px;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #111827;
+}
+
+/* Bill Payment */
+.form-container {
+    background: white;
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+button {
+    padding: 10px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background: #2563eb;
+}
+
+/* Products */
+.products {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.card h3 {
+    margin: 10px 0;
+}
+
+.cart {
+    background: white;
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.cart ul {
+    list-style: none;
+    margin-bottom: 10px;
+}
+
+.cart li {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+footer {
+    background: #111827;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    margin-top: 30px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>SmartHome Pro</h1>
+<p>Pay Bills & Buy Home Items Securely</p>
+</header>
+
+<nav>
+<a href="#bills">Pay Bills</a>
+<a href="#shop">Shop Furniture</a>
+</nav>
+
+<!-- Bill Section -->
+<section id="bills">
+<h2>Bill Payment</h2>
+<div class="form-container">
+<select id="billType">
+<option value="">Select Bill</option>
+<option>Electricity</option>
+<option>Water</option>
+<option>Internet</option>
+<option>Gas</option>
+</select>
+<input type="text" id="account" placeholder="Account Number">
+<input type="number" id="billAmount" placeholder="Amount">
+<button onclick="payBill()">Pay Now</button>
+</div>
+</section>
+
+<!-- Shop Section -->
+<section id="shop">
+<h2>Furniture & Home Items</h2>
+
+<div class="products">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1582582494700-9f7c8e2d5e0c">
+<h3>Luxury Sofa</h3>
+<p>$800</p>
+<button onclick="addToCart('Luxury Sofa',800)">Add</button>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1616627983600-1e7b8f0a3c5d">
+<h3>Wood Dining Table</h3>
+<p>$600</p>
+<button onclick="addToCart('Wood Dining Table',600)">Add</button>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c">
+<h3>Modern Bed</h3>
+<p>$950</p>
+<button onclick="addToCart('Modern Bed',950)">Add</button>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1598300056396-4aac492f9f9d">
+<h3>Office Chair</h3>
+<p>$250</p>
+<button onclick="addToCart('Office Chair',250)">Add</button>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1581579185169-4b9e2f8e4b0a">
+<h3>Microwave Oven</h3>
+<p>$180</p>
+<button onclick="addToCart('Microwave Oven',180)">Add</button>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1567016549634-2d7b08c1f3b6">
+<h3>Refrigerator</h3>
+<p>$1200</p>
+<button onclick="addToCart('Refrigerator',1200)">Add</button>
+</div>
+
+</div>
+
+<!-- Cart -->
+<div class="cart">
+<h3>Shopping Cart</h3>
+<ul id="cartList"></ul>
+<h4>Total: $<span id="total">0</span></h4>
+<button onclick="checkout()">Checkout</button>
+</div>
+
+</section>
+
+<footer>
+<p>© 2026 SmartHome Pro | Secure Checkout</p>
+</footer>
+
+<script>
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+updateCart();
+
+function payBill() {
+let type = document.getElementById("billType").value;
+let account = document.getElementById("account").value;
+let amount = document.getElementById("billAmount").value;
+
+if(type === "" || account === "" || amount === "") {
+alert("Fill all bill details!");
+return;
+}
+alert("Payment of $" + amount + " for " + type + " successful!");
+}
+
+function addToCart(name, price) {
+cart.push({name, price});
+localStorage.setItem("cart", JSON.stringify(cart));
+updateCart();
+}
+
+function updateCart() {
+let list = document.getElementById("cartList");
+let total = 0;
+list.innerHTML = "";
+
+cart.forEach((item, index) => {
+total += item.price;
+let li = document.createElement("li");
+li.innerHTML = item.name + " - $" + item.price + 
+" <button onclick='removeItem(" + index + ")'>X</button>";
+list.appendChild(li);
+});
+
+document.getElementById("total").innerText = total;
+}
+
+function removeItem(index) {
+cart.splice(index,1);
+localStorage.setItem("cart", JSON.stringify(cart));
+updateCart();
+}
+
+function checkout() {
+if(cart.length === 0){
+alert("Cart is empty!");
+return;
+}
+alert("Order placed successfully!");
+cart = [];
+localStorage.setItem("cart", JSON.stringify(cart));
+updateCart();
+}
+</script>
+
+</body>
+</html>
